@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import { todoAction } from "./reducer";
 class ToDo extends Component {
     componentDidMount() {
-        console.log(this.props.addTodo);
+        this.props.getTodo()
+        //console.log(this.props.addTodo);
     }
     state = {
         newItem: "",
@@ -64,12 +65,13 @@ class ToDo extends Component {
 // subscribe
 const mapStateToProps = (state, ownProps) => {
     return {
-        todos: state.todoReducer.todos,
+        todos: state.todo.todos,
     };
 };
 //dispatch
 const mapDispatchToProps = (dispatch) => {
     return {
+        getTodo: (value) => dispatch(todoAction.getTodo(value)),
         addTodo: (value) => dispatch(todoAction.addTodo(value)),
     };
 };

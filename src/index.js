@@ -3,16 +3,38 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { createStore, combineReducers } from "redux";
+import { combineReducers } from "redux";
 import { Provider } from 'react-redux';
 import { todoReducer } from "./reducer";
-
-const store = combineReducers({
+import createSagaMiddleware from 'redux-saga';
+import { all } from 'redux-saga/effects';
+import { logger } from 'redux-logger';
+import { watchTodo } from './saga'
+import { configureStore } from '@reduxjs/toolkit'
+const rootReducer = combineReducers({
     todo : todoReducer,
 });
 
+const sagaMiddleware = createSagaMiddleware();
+
+function* rootSaga() {
+    yield all([watchTodo()]);
+}
+
+const store = () => {
+	const store = configureStore({
+		reducer: rootReducer,
+		devTools: true,
+		middleware: [sagaMiddleware, logger],
+    });
+    
+	sagaMiddleware.run(rootSaga);
+	return store;
+};
+
+
 ReactDOM.render(
-    <Provider store={createStore(store)}>
+    <Provider store={store()}>
         <React.StrictMode>
             <App />
         </React.StrictMode>
