@@ -9,7 +9,6 @@ import { todoReducer } from "./reducer";
 import createSagaMiddleware from 'redux-saga';
 import { all } from 'redux-saga/effects';
 import { logger } from 'redux-logger';
-import { watchTodo } from './saga'
 import { configureStore } from '@reduxjs/toolkit'
 const rootReducer = combineReducers({
     todo : todoReducer,
@@ -18,15 +17,15 @@ const rootReducer = combineReducers({
 const sagaMiddleware = createSagaMiddleware();
 
 function* rootSaga() {
-    yield all([watchTodo()]);
+    //yield all();
 }
 
 const store = () => {
 	const store = configureStore({
 		reducer: rootReducer,
-		devTools: true,
+		devTools: true, 
 		middleware: [sagaMiddleware, logger],
-    });
+    }); 
     
 	sagaMiddleware.run(rootSaga);
 	return store;

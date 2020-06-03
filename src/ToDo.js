@@ -3,15 +3,22 @@ import ToDoAdd from "./ToDoAdd";
 import ToDoItem from "./ToDoItem";
 import { connect } from "react-redux";
 import { todoAction } from "./reducer";
+import axios from 'axios';
+
+const ApiClient = axios.create({
+    baseURL: 'http://localhost:3001',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
+
+
 class ToDo extends Component {
     componentDidMount() {
-        this.props.getTodo()
-        //console.log(this.props.addTodo);
+        ApiClient.get(`/todo`).then(result => this.props.getTodo(result))
     }
-    state = {
-        newItem: "",
-        list: [],
-    };
+    
 
     updateInput(key, value) {
         this.setState({ [key]: value });
@@ -28,9 +35,12 @@ class ToDo extends Component {
             id: 1 + Math.random(),
             value: value, //.slice()
         };
-
+  
         //const list = [...this.state.list];
+
+        ApiClient.post(`/todo`,newItem)
         this.props.addTodo(newItem);
+
         //   list.push(newItem);
 
         //   this.setState({
@@ -65,7 +75,7 @@ class ToDo extends Component {
 // subscribe
 const mapStateToProps = (state, ownProps) => {
     return {
-        todos: state.todo.todos,
+        todos: state.todo.list,
     };
 };
 //dispatch
